@@ -15,7 +15,7 @@ public class Conexion {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(url, user, pass);
         }catch(Exception e){
-            
+            System.out.println("Error: " + e.getMessage());
         }
         return con;
     }
