@@ -5,15 +5,22 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-        <title>JSP Page</title>
+        <title>VENTAS</title>
+        <style>
+            @media print{
+                .parte01, .btn, .accion{
+                    display: none;
+                }
+            }
+        </style>
     </head>
     <body>
         <div class="d-flex">
-            <div class="col-lg-5">
+            <div class="col-lg-5 parte01">
                 <div class="card">
                     <form action="Controlador?menu=NuevaVenta" method="POST">                        
                         <div class="card-body">
-                            <!<!-- DATOS DEL PRODUCTO -->
+                            <!-- DATOS DEL PRODUCTO -->
                             <div class="form-group">
                                 <label>Datos del Cliente</label>
                             </div>
@@ -26,7 +33,7 @@
                                     <input type="text" name="nombrescliente" value="${cliente.getNom()}" placeholder="Datos Cliente" class="form-control">
                                 </div>                                                                                    
                             </div>
-                            <!<!-- DATOS DEL PRODUCTO -->
+                            <!-- DATOS DEL PRODUCTO -->
                             <div class="form-group">
                                 <label>Datos Producto</label>
                             </div>
@@ -78,7 +85,7 @@
                                         <th>Precio</th>
                                         <th>Cantidad</th>
                                         <th>SubTotal</th>
-                                        <th>Acciones</th>
+                                        <th class="accion">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -103,7 +110,7 @@
                     </div>
                     <div class="card-footer d-flex">
                         <div class="col-sm-6">
-                            <input type="submit" name="accion" value="Generar Venta" class="btn btn-success">
+                            <a href="Controlador?menu=NuevaVenta&accion=GenerarVenta" onclick="print()" class="btn btn-success">Generar Venta</a>                            
                             <input type="submit" name="accion" value="Cancelar" class="btn btn-danger">
                         </div>
                         <div class="col-sm-3 ml-auto">
