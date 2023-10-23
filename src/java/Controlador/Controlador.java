@@ -6,8 +6,12 @@ import Modelo.Empleado;
 import Modelo.EmpleadoDAO;
 import Modelo.Producto;
 import Modelo.ProductoDAO;
+import Modelo.Venta;
+import Modelo.VentaDAO;
+import config.GenerarSerie;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class Controlador extends HttpServlet {
-
+    
     Empleado em = new Empleado();
     EmpleadoDAO edao = new EmpleadoDAO();
     Cliente cl = new Cliente();
@@ -25,7 +29,20 @@ public class Controlador extends HttpServlet {
     int ide;
     int idc;
     int idp;
-
+    
+    Venta ve = new Venta();
+    List<Venta> lista = new ArrayList<>();
+    int item;
+    int cod;
+    String descripcion;
+    double precio;
+    int cantidad;
+    double subtotal;
+    double totalPagar;
+    
+    String numeroserie;
+    VentaDAO vdao = new VentaDAO();
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -151,7 +168,7 @@ public class Controlador extends HttpServlet {
                         pdao.agregar(pr);
                         request.getRequestDispatcher("Controlador?menu=Producto&accion=Listar").forward(request, response);
                         break;
-
+                    
                     case "Editar":
                         idp = Integer.parseInt(request.getParameter("id"));
                         Producto p = pdao.listarId(idp);
@@ -187,14 +204,55 @@ public class Controlador extends HttpServlet {
                         String dni = request.getParameter("codigocliente");
                         cl.setDni(dni);
                         cl = cdao.buscar(dni);
-                        request.setAttribute("cl", cl);
+                        request.setAttribute("cliente", cl);
+                        break;
+                    case "BuscarProducto":
+                        int id = Integer.parseInt(request.getParameter("codigoproducto"));
+                        pr = pdao.listarId(id);
+                        request.setAttribute("cliente", cl);
+                        request.setAttribute("producto", pr);
+                        request.setAttribute("lista", lista);
+                        request.setAttribute("totalpagar", totalPagar);
+                        break;
+                    case "Agregar":
+                        request.setAttribute("cliente", cl);
+                        totalPagar = 0.0;
+                        item = item + 1;
+                        cod = pr.getId();
+                        descripcion = request.getParameter("nomproducto");
+                        precio = Double.parseDouble(request.getParameter("precio"));
+                        cantidad = Integer.parseInt(request.getParameter("cant"));
+                        subtotal = precio * cantidad;
+                        ve = new Venta();
+                        ve.setItem(item);
+                        ve.setIdProducto(cod);
+                        ve.setDescripcionPr(descripcion);
+                        ve.setPrecio(precio);
+                        ve.setCantidad(cantidad);
+                        ve.setSubtotal(subtotal);
+                        lista.add(ve);
+                        for (int i = 0; i < lista.size(); i++) {
+                            totalPagar = totalPagar + lista.get(i).getSubtotal();
+                        }
+                        request.setAttribute("totalpagar", totalPagar);
+                        request.setAttribute("lista", lista);
                         break;
                     default:
+                        numeroserie = vdao.GenerarSerie();
+                        if (numeroserie == null) {
+                            numeroserie = "00000001";
+                            request.setAttribute("nserie", numeroserie);
+                        } else {
+                            int incrementar = Integer.parseInt(numeroserie);
+                            GenerarSerie gs = new GenerarSerie();
+                            numeroserie = gs.NumeroSerie(incrementar);
+                            request.setAttribute("nserie", numeroserie);
+                        }
                         request.getRequestDispatcher("RegistrarVenta.jsp").forward(request, response);
                 }
                 request.getRequestDispatcher("RegistrarVenta.jsp").forward(request, response);
             }
-
+            
         }
     }
 

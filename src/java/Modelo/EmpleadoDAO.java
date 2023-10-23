@@ -77,15 +77,15 @@ public class EmpleadoDAO {
         }
         return r;
     }
-    
-    public Empleado listarId(int id){
+
+    public Empleado listarId(int id) {
         Empleado emp = new Empleado();
         String sql = "SELECT * FROM empleado WHERE IdEmpleado=" + id;
         try {
             con = cn.Conexion();
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 emp.setDni(rs.getString(2));
                 emp.setNom(rs.getString(3));
                 emp.setTel(rs.getString(4));
@@ -97,7 +97,7 @@ public class EmpleadoDAO {
         }
         return emp;
     }
-    
+
     public int actualizar(Empleado em) {
         String sql = "UPDATE empleado SET Dni=?, Nombres=?, Telefono=?, Estado=?, User=? WHERE IdEmpleado=?";
         try {
