@@ -8,15 +8,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.http.HttpSession;
 
-/**
- *
- * @author crist
- */
+
 public class Validar extends HttpServlet {
     
     EmpleadoDAO edao = new EmpleadoDAO();
     Empleado em = new Empleado();
+    Codificador cod = new Codificador();
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -63,11 +67,17 @@ public class Validar extends HttpServlet {
             throws ServletException, IOException {        
         String accion = request.getParameter("accion");
         if (accion.equalsIgnoreCase("Ingresar")) {
-            String user = request.getParameter("txtuser");
-            String pass = request.getParameter("txtpass");            
-            em = edao.validar(user, pass);
-            if (em.getUser() != null) {
-                request.setAttribute("usuario", em);
+            String user = request.getParameter("txtuser");               
+            String pass = cod.sha256("txtpass");
+            System.out.println("Contraseña cifrada: " + pass);
+            Empleado item = new Empleado();
+            item.setUser(user);
+            item.setContrasena(pass);            
+            
+            em = edao.validar(item);
+            if (em.getUser() != null) {                
+                HttpSession sesion = request.getSession();
+                sesion.setAttribute("usuario", em);                
                 request.getRequestDispatcher("Controlador?menu=Principal").forward(request, response);
             } else {
                 request.getRequestDispatcher("index.jsp").forward(request, response);
@@ -87,4 +97,24 @@ public class Validar extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    
+    /*public static String sha256(final String base){
+        try {
+            final MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            final byte[] hash = digest.digest(base.getBytes("UTF-8"));
+            final StringBuilder hexString = new StringBuilder();
+            for(int i=0; i < hash.length; i++){
+                final String hex = Integer.toHexString(0xff & hash[i]);
+                if(hex.length() == 1){
+                    hexString.append('0');
+                }
+                hexString.append(hex);                
+            }
+            return hexString.toString();
+        } catch (Exception e) {
+            System.out.println("Error en Sha256: " + e.getMessage());
+            throw new RuntimeException(e);
+        }        
+    }*/
+    
 }

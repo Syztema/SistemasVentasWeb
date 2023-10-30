@@ -1,5 +1,11 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import = "Modelo.Empleado"%>
+<% 
+    HttpSession sesion = request.getSession();
+    Empleado emp = (Empleado) sesion.getAttribute("usuario");
+    if(emp != null){
+%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -32,6 +38,10 @@
                             <label>Usuario</label>
                             <input type="text" value="${empleado.getUser()}" name="txtUsuario" class="form-control">
                         </div>     
+                        <div class="form-group">
+                            <label>Contraseña</label>
+                            <input type="text" value="${empleado.getContrasena()}" name="txtContrasena" class="form-control">
+                        </div>
                         <input type="submit" name="accion" value="Agregar" class="btn btn-info">
                         <input type="submit" name="accion" value="Actualizar" class="btn btn-success">
                     </form>
@@ -47,6 +57,7 @@
                             <th>TELEFONO</th>
                             <th>ESTADO</th>
                             <th>USUARIO</th>
+                            <th>CONTRASEÑA</th>
                             <th>ACCIONES</th>
                         </tr>
                     </thead>
@@ -59,6 +70,7 @@
                                 <td>${em.getTel()}</td>
                                 <td>${em.getEstado()}</td>
                                 <td>${em.getUser()}</td>
+                                <td>${em.getContrasena()}</td>
                                 <td>
                                     <a class="btn btn-warning" href="Controlador?menu=Empleado&accion=Editar&id=${em.getId()}">Editar</a>
                                     <a class="btn btn-danger" href="Controlador?menu=Empleado&accion=Eliminar&id=${em.getId()}">Eliminar</a>
@@ -75,3 +87,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
     </body>
 </html>
+<%
+    }else{
+    request.getRequestDispatcher("index.jsp").forward(request , response);
+}
+%>

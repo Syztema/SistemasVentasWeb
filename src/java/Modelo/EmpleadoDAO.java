@@ -15,25 +15,28 @@ public class EmpleadoDAO {
     ResultSet rs;
     int r;
 
-    public Empleado validar(String user, String dni) {
+    public Empleado validar(Empleado item) {
         Empleado em = new Empleado();
-        String sql = "SELECT * FROM empleado WHERE User=? AND Dni=?";
+        String sql = "SELECT * FROM empleado WHERE User=? AND Contrasena=?";
 
         try {
+            System.out.println("Item: " + item.toString());
             con = cn.Conexion();
             ps = con.prepareStatement(sql);
-            ps.setString(1, user);
-            ps.setString(2, dni);
+            ps.setString(1, item.getUser());
+            ps.setString(2, item.getContrasena());
             rs = ps.executeQuery();
             while (rs.next()) {
+                System.out.println("Entro en while");
                 em.setId(rs.getInt("IdEmpleado"));
                 em.setUser(rs.getString("User"));
-                em.setDni(rs.getString("Dni"));
+                em.setContrasena(rs.getString("Contrasena"));
                 em.setNom(rs.getString("Nombres"));
             }
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
+        System.out.println("Datos Empleado: " + em.toString());
         return em;
     }
 
@@ -53,6 +56,7 @@ public class EmpleadoDAO {
                 em.setTel(rs.getString(4));
                 em.setEstado(rs.getString(5));
                 em.setUser(rs.getString(6));
+                em.setContrasena(rs.getString(7));
                 lista.add(em);
             }
         } catch (Exception e) {
@@ -62,7 +66,7 @@ public class EmpleadoDAO {
     }
 
     public int agregar(Empleado em) {
-        String sql = "INSERT INTO empleado(Dni, Nombres, Telefono, Estado, User) VALUE (?,?,?,?,?)";
+        String sql = "INSERT INTO empleado(Dni, Nombres, Telefono, Estado, User, Contrasena) VALUE (?,?,?,?,?,?)";
         try {
             con = cn.Conexion();
             ps = con.prepareStatement(sql);
@@ -71,6 +75,7 @@ public class EmpleadoDAO {
             ps.setString(3, em.getTel());
             ps.setString(4, em.getEstado());
             ps.setString(5, em.getUser());
+            ps.setString(6, em.getContrasena());
             ps.executeUpdate();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
@@ -91,6 +96,7 @@ public class EmpleadoDAO {
                 emp.setTel(rs.getString(4));
                 emp.setEstado(rs.getString(5));
                 emp.setUser(rs.getString(6));
+                emp.setContrasena(rs.getString(7));
             }
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
@@ -99,7 +105,7 @@ public class EmpleadoDAO {
     }
 
     public int actualizar(Empleado em) {
-        String sql = "UPDATE empleado SET Dni=?, Nombres=?, Telefono=?, Estado=?, User=? WHERE IdEmpleado=?";
+        String sql = "UPDATE empleado SET Dni=?, Nombres=?, Telefono=?, Estado=?, User=?, Contrasena=? WHERE IdEmpleado=?";
         try {
             con = cn.Conexion();
             ps = con.prepareStatement(sql);
@@ -108,7 +114,8 @@ public class EmpleadoDAO {
             ps.setString(3, em.getTel());
             ps.setString(4, em.getEstado());
             ps.setString(5, em.getUser());
-            ps.setInt(6, em.getId());
+            ps.setString(6, em.getContrasena());
+            ps.setInt(7, em.getId());
             ps.executeUpdate();
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
